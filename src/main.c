@@ -1,5 +1,5 @@
 #include <stdio.h>
-
-int main () {
-	return 0;
+int main(void) {
+  printf("Welcome to NVIM!");
+  return 0;
 }
