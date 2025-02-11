@@ -1,4 +1,7 @@
+#include <stdbool.h>
 #include <stdio.h>
+#define FIELD_WIDTH 10
+#define FIELD_HEIGHT 20
 typedef enum {
   Start,
   Pause,
@@ -21,5 +24,5 @@ typedef struct {
 } GameInfo_t;
 
 void userInput(UserAction_t action, bool hold);
-
+void fillField(int **field);
 GameInfo_t updateCurrentState();

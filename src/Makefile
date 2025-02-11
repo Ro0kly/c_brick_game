@@ -1,3 +1,3 @@
 all:
-	gcc main.c -o program.out
+	gcc main.c engine.c -o program.out
 	./program.out
