@@ -4,41 +4,24 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
-void move_down(int **field) {
-  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
-    for (int j = 0; j < FIELD_WIDTH; j++) {
-      if (field[i][j] == 1 && i != FIELD_HEIGHT - 1) {
-        field[i][j] = 0;
-        field[i + 1][j] = 1;
-      }
-    }
-  }
+
+void init_ncurses() {
+  initscr();
+  curs_set(0);
+  keypad(stdscr, true);
+  nodelay(stdscr, true);
 }
-void move_right(int **field) {
-  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
-    for (int j = FIELD_WIDTH - 1; j >= 0; j--) {
-      if (field[i][j] == 1) {
-        if (j == FIELD_WIDTH - 1) {
-          break;
-        }
-        field[i][j] = 0;
-        field[i][j + 1] = 1;
-      }
-    }
-  }
-}
-void move_left(int **field) {
-  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
-    for (int j = 0; j < FIELD_WIDTH; j++) {
-      if (field[i][j] == 1) {
-        if (j == 0) {
-          break;
-        }
-        field[i][j] = 0;
-        field[i][j - 1] = 1;
-      }
-    }
-  }
+
+void delay(double dly) {
+  /* save start time */
+  const time_t start = time(NULL);
+  time_t current;
+  do {
+    /* get current time */
+    time(&current);
+    /* break loop when the requested number of seconds have elapsed */
+
+  } while (difftime(current, start) < dly);
 }
 int main(int argc, char *argv[]) {
   printf("Welcome to NVIM!\n");
@@ -51,68 +34,21 @@ int main(int argc, char *argv[]) {
   fillFieldByDefault(game_info.field);
   addNewPieceOnField(game_info.field, red);
   int secondsLeft = 100;
-
-  printf("START!");
   int ch;
-  int iterations = 0;
-  int msec = 0, trigger = 10000; /* 10ms */
-  clock_t before = clock();
-  do {
-    clock_t difference = clock() - before;
-    msec = difference * 1000 / CLOCKS_PER_SEC;
-    if (msec == 1000) {
-      before = clock();
-      printf("tick");
-    }
-    iterations++;
+  initscr();
+  curs_set(0);
+  keypad(stdscr, true);
+  nodelay(stdscr, true);
+  for (int i = 0; i < 25; i++) {
+    clear();
+    // printw("%d seconds have passed\n", i + 1);
 
-  } while (msec < trigger);
-
-  printf("Time taken %d seconds %d milliseconds (%d iterations)\n", msec / 1000,
-         msec % 1000, iterations);
-  // initscr();
-  // curs_set(0);
-  // keypad(stdscr, true);
-  // nodelay(stdscr, true);
-  //
-  // refresh();
+    move_down(game_info.field);
+    print_field(game_info.field);
+    refresh();
+    delay(1);
+  }
+  printw("dadadad");
   endwin();
-
   return 0;
 }
-// while ((ch = getch()) != KEY_ENTER) {
-//   clear();
-//   if (ch == KEY_DOWN) {
-//     for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
-//       // printw("iiiii\n");
-//       for (int j = 0; j < FIELD_WIDTH; j++) {
-//         // printw("jjjjj\n");
-//         if (game_info.field[i][j] == 1 && i != FIELD_HEIGHT - 1) {
-//           game_info.field[i][j] = 0;
-//           game_info.field[i + 1][j] = 1;
-//         }
-//       }
-//     }
-//     printw("DOWN!");
-//     print_field(game_info.field);
-//   }
-// }
-
-//
-// #include <ncurses.h>
-//
-// int main() {
-//   int secondsLeft = 120;
-//   initscr();
-//   curs_set(0);
-//   do {
-//     printw("%i", secondsLeft);
-//     // refresh();
-//     // erase();
-//     clear();
-//     secondsLeft--;
-//     napms(1000);
-//   } while (secondsLeft > 0);
-//   endwin();
-//   return 0;
-// }

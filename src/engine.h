@@ -33,3 +33,6 @@ GameInfo_t updateCurrentState();
 void print_field(int **field);
 void fillFieldByDefault(int **field);
 void addNewPieceOnField(int **field, PieceKind_t kind);
+void move_down(int **field);
+void move_left(int **field);
+void move_right(int **field);

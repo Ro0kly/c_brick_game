@@ -27,3 +27,40 @@ void print_field(int **field) {
     printw("\n");
   }
 }
+
+void move_down(int **field) {
+  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
+    for (int j = 0; j < FIELD_WIDTH; j++) {
+      if (field[i][j] == 1 && i != FIELD_HEIGHT - 1) {
+        field[i][j] = 0;
+        field[i + 1][j] = 1;
+      }
+    }
+  }
+}
+void move_right(int **field) {
+  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
+    for (int j = FIELD_WIDTH - 1; j >= 0; j--) {
+      if (field[i][j] == 1) {
+        if (j == FIELD_WIDTH - 1) {
+          break;
+        }
+        field[i][j] = 0;
+        field[i][j + 1] = 1;
+      }
+    }
+  }
+}
+void move_left(int **field) {
+  for (int i = FIELD_HEIGHT - 1; i >= 0; i--) {
+    for (int j = 0; j < FIELD_WIDTH; j++) {
+      if (field[i][j] == 1) {
+        if (j == 0) {
+          break;
+        }
+        field[i][j] = 0;
+        field[i][j - 1] = 1;
+      }
+    }
+  }
+}
