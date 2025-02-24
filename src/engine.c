@@ -1,4 +1,16 @@
 #include "engine.h"
+
+GameInfo_t updateCurrentState() {
+  GameInfo_t game_info = {0};
+  game_info.field = malloc(FIELD_HEIGHT * sizeof(int *));
+
+  for (int i = 0; i < FIELD_HEIGHT; i++) {
+    game_info.field[i] = malloc(FIELD_WIDTH * sizeof(int));
+  }
+  fillFieldByDefault(game_info.field);
+  addNewPieceOnField(game_info.field, red);
+  return game_info;
+}
 const int red_piece[2][4] = {{0, 0, 0, 0}, {1, 1, 1, 1}};
 void fillFieldByDefault(int **field) {
   for (int i = 0; i < FIELD_HEIGHT; i++) {
