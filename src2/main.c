@@ -32,9 +32,10 @@ int main() {
     // mvprintw(1, WIDTH * 2 + 5, "Time: %02d:%02d", elapsed_time / 60,
     //          elapsed_time % 60);
     refresh();
-
-    // // Handle user input
-    int ch = getch();
+    --Need to think, create userInput first or create updateCurrentStateFirst,
+        btw I think userInput
+        // // Handle user input
+        int ch = getch();
     if (ch != ERR) {
       Tetromino temp = makeTemp();
       switch (ch) {
