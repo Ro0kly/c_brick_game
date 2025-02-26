@@ -1,5 +1,5 @@
-#include "engine.h"
-
+#include "brick_game/tetris/tetris.h"
+#include "gui/cli/draw.h"
 // Function prototypes
 
 // Tetromino shapes (7 types, 4 rotations each)
@@ -17,15 +17,15 @@ int main() {
 
   time_t start_time = time(NULL);
   time_t last_fall_time = start_time;
-  Tetromino current = getCurrent();
   while (1) {
     // Calculate elapsed time
     // elapsed_time = (int)(time(NULL) - start_time);
 
     // Draw the field and tetromino
     clear();
-    draw_field();
-    draw_tetromino(0);
+    draw_field(getField());
+    // draw_tetromino(0);
+    draw_tetromino(getCurrent());
 
     // Display score and timer
     // mvprintw(0, WIDTH * 2 + 5, "Score: %d", score);
@@ -57,7 +57,7 @@ int main() {
         lock_tetromino();
         clear_lines();
         spawn_tetromino();
-        if (check_collision(current)) {
+        if (check_collision(getCurrent())) {
           game_over();
           break;
         }
@@ -84,7 +84,7 @@ int main() {
         lock_tetromino();
         clear_lines();
         spawn_tetromino();
-        if (check_collision(current)) {
+        if (check_collision(getCurrent())) {
           game_over();
           break;
         }

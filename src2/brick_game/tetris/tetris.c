@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "tetris.h"
 static int field[HEIGHT][WIDTH] = {0}; // Playing field
 static int score = 0;                  // Player's score
 static int elapsed_time = 0;           // Elapsed time in seconds
@@ -10,23 +10,23 @@ Tetromino makeTemp() {
   Tetromino temp = current;
   return temp;
 }
-
+int (*getField())[10] { return field; }
 void move_top() { current.y--; }
 void move_bottom() { current.y++; }
 void move_left() { current.x--; }
 void move_right() { current.x++; }
 
 // Draw or erase a tetromino
-void draw_tetromino(int erase) {
-  for (int y = 0; y < TETROMINO_SIZE; y++) {
-    for (int x = 0; x < TETROMINO_SIZE; x++) {
-      if (tetrominoes[current.type][current.rotation][y][x]) {
-        mvprintw(current.y + y + 2, (current.x + x) * 2 + 2,
-                 erase ? " ." : "[]");
-      }
-    }
-  }
-}
+// void draw_tetromino(int erase) {
+//   for (int y = 0; y < TETROMINO_SIZE; y++) {
+//     for (int x = 0; x < TETROMINO_SIZE; x++) {
+//       if (tetrominoes[current.type][current.rotation][y][x]) {
+//         mvprintw(current.y + y + 2, (current.x + x) * 2 + 2,
+//                  erase ? " ." : "[]");
+//       }
+//     }
+//   }
+// }
 // Rotate the current tetromino
 void rotate_tetromino() {
   Tetromino temp = current;
@@ -43,22 +43,22 @@ void spawn_tetromino() {
   current.x = WIDTH / 2 - 2;
   current.y = 0;
 }
-// Display game over message
-void game_over() {
-  clear();
-  mvprintw(HEIGHT / 2, WIDTH, "GAME OVER!");
-  // mvprintw(HEIGHT / 2 + 1, WIDTH, "Final Score: %d", score);
-  refresh();
-  sleep(3); // Wait for 3 seconds before exiting
-}
-// Draw the playing field
-void draw_field() {
-  for (int y = 0; y < HEIGHT; y++) {
-    for (int x = 0; x < WIDTH; x++) {
-      mvprintw(y + 2, x * 2 + 2, field[y][x] ? "[]" : " .");
-    }
-  }
-}
+// // Display game over message
+// void game_over() {
+//   clear();
+//   mvprintw(HEIGHT / 2, WIDTH, "GAME OVER!");
+//   // mvprintw(HEIGHT / 2 + 1, WIDTH, "Final Score: %d", score);
+//   refresh();
+//   sleep(3); // Wait for 3 seconds before exiting
+// }
+// // Draw the playing field
+// void draw_field() {
+//   for (int y = 0; y < HEIGHT; y++) {
+//     for (int x = 0; x < WIDTH; x++) {
+//       mvprintw(y + 2, x * 2 + 2, field[y][x] ? "[]" : " .");
+//     }
+//   }
+// }
 
 // Check for collision with the field or boundaries
 int check_collision(Tetromino t) {
