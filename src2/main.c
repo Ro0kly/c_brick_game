@@ -8,26 +8,30 @@
 int main() {
   initNcurses();
   initGameInfo();
+  spawn_tetromino(); // Spawn the first tetromino
 
   srand(time(NULL)); // Seed random number generator
   time_t start_time = time(NULL);
   time_t last_fall_time = start_time;
-  setPauseStatus(1);
-  spawn_tetromino(); // Spawn the first tetromino
-  while (1) {
-    clear();
-    GameInfo_t game_info = updateCurrentState();
-    draw_field(game_info.field);
-    draw_tetromino(game_info.current);
-    draw_next_tetromino(game_info.next);
-    refresh();
-    UserAction_t action = getUserAction();
-    userInput(action, 0);
+  while (!getTerminateStatus()) {
+    if (getOverStatus()) {
+      draw_game_over();
+      setTerminateStatus(1);
+    } else {
+      clear();
+      GameInfo_t game_info = updateCurrentState();
+      draw_field(game_info.field);
+      draw_tetromino(game_info.current);
+      draw_next_tetromino(game_info.next);
+      refresh();
+      UserAction_t action = getUserAction();
+      userInput(action, 0);
 
-    time_t current_time = time(NULL);
-    if (current_time - last_fall_time >= 1) {
-      shift();
-      last_fall_time = current_time;
+      time_t current_time = time(NULL);
+      if (current_time - last_fall_time >= 1) {
+        shift();
+        last_fall_time = current_time;
+      }
     }
   }
 

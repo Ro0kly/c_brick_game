@@ -12,6 +12,8 @@ typedef struct {
   int level;
   int speed;
   int pause;
+  int terminate;
+  int over;
 } GameInfo_t;
 void initGameInfo();
 void userInput(UserAction_t action, bool hold);
@@ -29,3 +31,7 @@ void spawn_tetromino();
 void lock_tetromino();
 int getPauseStatus();
 void setPauseStatus(int status);
+int getTerminateStatus();
+void setTerminateStatus(int status);
+int getOverStatus();
+void setOverStatus(int status);

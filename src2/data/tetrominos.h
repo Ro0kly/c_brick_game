@@ -17,7 +17,6 @@ typedef enum {
   Terminate,
   Left,
   Right,
-  // Up,
   Down,
   Action,
   Nothing

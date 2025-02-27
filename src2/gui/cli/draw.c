@@ -21,7 +21,7 @@ void draw_next_tetromino(Tetromino tetro) {
   }
 }
 // Display game over message
-void game_over() {
+void draw_game_over() {
   clear();
   mvprintw(HEIGHT / 2, WIDTH, "GAME OVER!");
   // mvprintw(HEIGHT / 2 + 1, WIDTH, "Final Score: %d", score);

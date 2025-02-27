@@ -12,7 +12,13 @@ void initGameInfo() {
   game_info.next.type = rand() % 7;
   game_info.next.rotation = 0;
   game_info.pause = 1;
+  game_info.over = 0;
+  game_info.terminate = 0;
 }
+int getOverStatus() { return game_info.over; }
+void setOverStatus(int status) { game_info.over = status; }
+int getTerminateStatus() { return game_info.terminate; }
+void setTerminateStatus(int status) { game_info.terminate = status; }
 int getPauseStatus() { return game_info.pause; }
 void setPauseStatus(int status) { game_info.pause = status; }
 GameInfo_t updateCurrentState() { return game_info; }
@@ -20,7 +26,10 @@ void move_top() { game_info.current.y--; }
 void move_bottom() { game_info.current.y++; }
 void move_left() { game_info.current.x--; }
 void move_right() { game_info.current.x++; }
-
+void game_over() {
+  setPauseStatus(1);
+  setOverStatus(1);
+}
 void shift() {
   if (getPauseStatus()) {
     return;
@@ -33,12 +42,13 @@ void shift() {
     lock_tetromino();
     clear_lines();
     spawn_tetromino();
-    // if (check_collision(getCurrent())) {
-    //   game_over();
-    //   break;
-    // }
+    if (check_collision(game_info.current)) {
+      game_over();
+      //   break;
+    }
   }
 }
+
 void userInput(UserAction_t action, bool hold) {
 
   Tetromino temp = game_info.current;
@@ -72,7 +82,7 @@ void userInput(UserAction_t action, bool hold) {
     clear_lines();
     spawn_tetromino();
     if (check_collision(game_info.current)) {
-      // game_over();
+      game_over();
       break;
     }
     break;
@@ -83,6 +93,7 @@ void userInput(UserAction_t action, bool hold) {
     rotate_tetromino();
     break;
   case Terminate:
+    setTerminateStatus(1);
     break;
   case Nothing:
     break;
