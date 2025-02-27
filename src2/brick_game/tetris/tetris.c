@@ -1,23 +1,29 @@
 #include "tetris.h"
-static int field[HEIGHT][WIDTH] = {0}; // Playing field
-static int score = 0;                  // Player's score
-static int elapsed_time = 0;           // Elapsed time in seconds
+#include <stdlib.h>
+// static int field[HEIGHT][WIDTH] = {0}; // Playing field
+static int score = 0;        // Player's score
+static int elapsed_time = 0; // Elapsed time in seconds
 
-static Tetromino current = {0}; // Current falling tetromino
-Tetromino getCurrent() { return current; }
-
-Tetromino makeTemp() {
-  Tetromino temp = current;
-  return temp;
+static GameInfo_t game_info = {0};
+void initGameInfo() {
+  game_info.field = malloc(sizeof(int *) * HEIGHT);
+  for (int i = 0; i < HEIGHT; i++) {
+    game_info.field[i] = malloc(sizeof(int) * WIDTH);
+  }
+  game_info.current = (Tetromino){0};
+  game_info.next = (Tetromino){0};
+  game_info.next.type = rand() % 7;
+  game_info.next.rotation = 0;
 }
-int (*getField())[10] { return field; }
-void move_top() { current.y--; }
-void move_bottom() { current.y++; }
-void move_left() { current.x--; }
-void move_right() { current.x++; }
+
+GameInfo_t updateCurrentState() { return game_info; }
+void move_top() { game_info.current.y--; }
+void move_bottom() { game_info.current.y++; }
+void move_left() { game_info.current.x--; }
+void move_right() { game_info.current.x++; }
 
 void shift() {
-  Tetromino temp = current;
+  Tetromino temp = game_info.current;
   temp.y++;
   if (!check_collision(temp)) {
     move_bottom();
@@ -32,7 +38,7 @@ void shift() {
   }
 }
 void userInput(UserAction_t action, bool hold) {
-  Tetromino temp = current;
+  Tetromino temp = game_info.current;
   switch (action) {
   case Left:
     temp.x--;
@@ -53,7 +59,7 @@ void userInput(UserAction_t action, bool hold) {
     lock_tetromino();
     clear_lines();
     spawn_tetromino();
-    if (check_collision(getCurrent())) {
+    if (check_collision(game_info.current)) {
       // game_over();
       break;
     }
@@ -63,23 +69,27 @@ void userInput(UserAction_t action, bool hold) {
     break;
   case Terminate:
     break;
+  case Nothing:
+    break;
   }
 }
 // Rotate the current tetromino
 void rotate_tetromino() {
-  Tetromino temp = current;
+  Tetromino temp = game_info.current;
   temp.rotation = (temp.rotation + 1) % 4;
   if (!check_collision(temp)) {
-    current.rotation = temp.rotation;
+    game_info.current.rotation = temp.rotation;
   }
 }
 // Spawn a new tetromino
 void spawn_tetromino() {
-  // current.type = rand() % 7;
-  current.type = 5;
-  current.rotation = 0;
-  current.x = WIDTH / 2 - 2;
-  current.y = 0;
+  game_info.current.type = game_info.next.type;
+  game_info.current.rotation = game_info.next.rotation;
+  game_info.current.x = WIDTH / 2 - 2;
+  game_info.current.y = 0;
+
+  game_info.next.type = rand() % 7;
+  game_info.next.rotation = rand() % 4;
 }
 // // Display game over message
 
@@ -91,7 +101,7 @@ int check_collision(Tetromino t) {
         int new_x = t.x + x;
         int new_y = t.y + y;
         if (new_x < 0 || new_x >= WIDTH || new_y >= HEIGHT ||
-            field[new_y][new_x]) {
+            game_info.field[new_y][new_x]) {
           return 1;
         }
       }
@@ -105,7 +115,7 @@ void clear_lines() {
   for (int y = HEIGHT - 1; y >= 0; y--) {
     int full = 1;
     for (int x = 0; x < WIDTH; x++) {
-      if (!field[y][x]) {
+      if (!game_info.field[y][x]) {
         full = 0;
         break;
       }
@@ -114,7 +124,7 @@ void clear_lines() {
       // Shift all lines above down
       for (int yy = y; yy > 0; yy--) {
         for (int x = 0; x < WIDTH; x++) {
-          field[yy][x] = field[yy - 1][x];
+          game_info.field[yy][x] = game_info.field[yy - 1][x];
         }
       }
       // Clear the top line
@@ -131,11 +141,12 @@ void clear_lines() {
 void lock_tetromino() {
   for (int y = 0; y < TETROMINO_SIZE; y++) {
     for (int x = 0; x < TETROMINO_SIZE; x++) {
-      if (tetrominoes[current.type][current.rotation][y][x]) {
-        int new_x = current.x + x;
-        int new_y = current.y + y;
+      if (tetrominoes[game_info.current.type][game_info.current.rotation][y]
+                     [x]) {
+        int new_x = game_info.current.x + x;
+        int new_y = game_info.current.y + y;
         if (new_y >= 0 && new_y < HEIGHT && new_x >= 0 && new_x < WIDTH) {
-          field[new_y][new_x] = 1;
+          game_info.field[new_y][new_x] = 1;
         }
       }
     }

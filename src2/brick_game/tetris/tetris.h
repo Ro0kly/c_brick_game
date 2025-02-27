@@ -5,29 +5,25 @@
 #include <unistd.h>
 typedef struct {
   int **field;
-  int **next;
+  Tetromino current;
+  Tetromino next;
   int score;
   int high_score;
   int level;
   int speed;
   int pause;
 } GameInfo_t;
-Tetromino getCurrent();
-Tetromino makeTemp();
+void initGameInfo();
 void userInput(UserAction_t action, bool hold);
 void shift();
-// void draw_tetromino(int erase);
 void move_top();
 void move_bottom();
 void move_left();
 void move_right();
 
 GameInfo_t updateCurrentState();
-// void draw_field();
 int check_collision(Tetromino t);
 void rotate_tetromino();
 void clear_lines();
 void spawn_tetromino();
-// void game_over();
 void lock_tetromino();
-int (*getField())[10];

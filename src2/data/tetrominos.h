@@ -19,7 +19,8 @@ typedef enum {
   Right,
   // Up,
   Down,
-  Action
+  Action,
+  Nothing
 } UserAction_t;
 
 #endif

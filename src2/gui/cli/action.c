@@ -2,6 +2,7 @@
 
 UserAction_t getUserAction() {
   int ch = getch();
+
   UserAction_t action;
   switch (ch) {
   case KEY_LEFT:
@@ -18,6 +19,9 @@ UserAction_t getUserAction() {
     break;
   case 'q': // Quit game
     action = Terminate;
+    break;
+  case ERR:
+    action = Nothing;
     break;
   }
   return action;
