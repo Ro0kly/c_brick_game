@@ -12,8 +12,8 @@ typedef struct {
 } Tetromino;
 
 typedef enum {
-  // Start,
-  // Pause,
+  Start,
+  Pause,
   Terminate,
   Left,
   Right,

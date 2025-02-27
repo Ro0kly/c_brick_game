@@ -23,6 +23,12 @@ UserAction_t getUserAction() {
   case ERR:
     action = Nothing;
     break;
+  case 's':
+    action = Start;
+    break;
+  case 'p':
+    action = Pause;
+    break;
   }
   return action;
 }

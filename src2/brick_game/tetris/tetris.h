@@ -27,3 +27,5 @@ void rotate_tetromino();
 void clear_lines();
 void spawn_tetromino();
 void lock_tetromino();
+int getPauseStatus();
+void setPauseStatus(int status);

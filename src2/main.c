@@ -12,9 +12,8 @@ int main() {
   srand(time(NULL)); // Seed random number generator
   time_t start_time = time(NULL);
   time_t last_fall_time = start_time;
-
+  setPauseStatus(1);
   spawn_tetromino(); // Spawn the first tetromino
-
   while (1) {
     clear();
     GameInfo_t game_info = updateCurrentState();

@@ -1,8 +1,5 @@
 #include "tetris.h"
 #include <stdlib.h>
-// static int field[HEIGHT][WIDTH] = {0}; // Playing field
-static int score = 0;        // Player's score
-static int elapsed_time = 0; // Elapsed time in seconds
 
 static GameInfo_t game_info = {0};
 void initGameInfo() {
@@ -14,8 +11,10 @@ void initGameInfo() {
   game_info.next = (Tetromino){0};
   game_info.next.type = rand() % 7;
   game_info.next.rotation = 0;
+  game_info.pause = 1;
 }
-
+int getPauseStatus() { return game_info.pause; }
+void setPauseStatus(int status) { game_info.pause = status; }
 GameInfo_t updateCurrentState() { return game_info; }
 void move_top() { game_info.current.y--; }
 void move_bottom() { game_info.current.y++; }
@@ -23,6 +22,9 @@ void move_left() { game_info.current.x--; }
 void move_right() { game_info.current.x++; }
 
 void shift() {
+  if (getPauseStatus()) {
+    return;
+  }
   Tetromino temp = game_info.current;
   temp.y++;
   if (!check_collision(temp)) {
@@ -38,19 +40,29 @@ void shift() {
   }
 }
 void userInput(UserAction_t action, bool hold) {
+
   Tetromino temp = game_info.current;
   switch (action) {
   case Left:
+    if (getPauseStatus()) {
+      return;
+    }
     temp.x--;
     if (!check_collision(temp))
       move_left();
     break;
   case Right:
+    if (getPauseStatus()) {
+      return;
+    }
     temp.x++;
     if (!check_collision(temp))
       move_right();
     break;
   case Down:
+    if (getPauseStatus()) {
+      return;
+    }
     while (!check_collision(temp)) {
       temp.y++;
       move_bottom();
@@ -65,11 +77,20 @@ void userInput(UserAction_t action, bool hold) {
     }
     break;
   case Action:
+    if (getPauseStatus()) {
+      return;
+    }
     rotate_tetromino();
     break;
   case Terminate:
     break;
   case Nothing:
+    break;
+  case Start:
+    setPauseStatus(0);
+    break;
+  case Pause:
+    setPauseStatus(1);
     break;
   }
 }
