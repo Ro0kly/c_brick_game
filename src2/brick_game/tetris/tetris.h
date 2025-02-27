@@ -15,7 +15,7 @@ typedef struct {
 Tetromino getCurrent();
 Tetromino makeTemp();
 void userInput(UserAction_t action, bool hold);
-
+void shift();
 // void draw_tetromino(int erase);
 void move_top();
 void move_bottom();
