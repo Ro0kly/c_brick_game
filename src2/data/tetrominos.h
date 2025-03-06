@@ -1,5 +1,5 @@
 #define WIDTH 10
-#define HEIGHT 8
+#define HEIGHT 20
 #define TETROMINO_SIZE 4
 
 #ifndef TETROMINOS_H

@@ -1,4 +1,5 @@
 #include "tetris.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 static GameInfo_t game_info = {0};
@@ -58,8 +59,9 @@ void userInput(UserAction_t action, bool hold) {
       return;
     }
     temp.x--;
-    if (!check_collision(temp))
+    if (!check_collision(temp)) {
       move_left();
+    }
     break;
   case Right:
     if (getPauseStatus()) {

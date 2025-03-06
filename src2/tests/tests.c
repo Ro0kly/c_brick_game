@@ -1,38 +1,111 @@
-#include "tetris.h" // Include your Tetris program header
+// #include "tetris.h" // Include your Tetris program header
+#include "../brick_game/tetris/tetris.h"
+#include "../data/tetrominos.h"
+#include "../gui/cli/action.h"
 #include <check.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-// Test case for collision with the bottom
-START_TEST(test_collision_with_bottom) {
-  // Initialize the field (empty)
-  int field[HEIGHT][WIDTH] = {0};
-
-  // Create a tetromino at the bottom of the field
-  Tetromino t;
-  t.type = 0; // I-shaped tetromino
-  t.rotation = 0;
-  t.x = 0;
-  t.y = HEIGHT - TETROMINO_SIZE; // Position it just above the bottom
-
-  // Check that there is no collision initially
-  ck_assert_int_eq(check_collision(t), 0);
-
-  // Move the tetromino down by 1 (should collide with the bottom)
-  t.y++;
-  ck_assert_int_eq(check_collision(t), 1);
+START_TEST(test_move_tetromino_left) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  int x0 = game_info.current.x;
+  userInput(Left, false);
+  game_info = updateCurrentState();
+  int x1 = game_info.current.x;
+  ck_assert_int_eq(x0 - 1, x1);
 }
 END_TEST
 
-// Test suite
+START_TEST(test_move_tetromino_right) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  int x0 = game_info.current.x;
+  userInput(Right, false);
+  game_info = updateCurrentState();
+  int x1 = game_info.current.x;
+  ck_assert_int_eq(x0 + 1, x1);
+}
+END_TEST
+
+START_TEST(test_move_tetromino_down) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  int y0 = game_info.current.y;
+  userInput(Down, false);
+  game_info = updateCurrentState();
+  int y1 = game_info.current.y;
+  ck_assert_int_eq(y0, y1);
+  ck_assert_int_eq(game_info.field[16][WIDTH / 2 - 2], 1);
+  ck_assert_int_eq(game_info.field[17][WIDTH / 2 - 2], 1);
+  ck_assert_int_eq(game_info.field[18][WIDTH / 2 - 2], 1);
+  ck_assert_int_eq(game_info.field[19][WIDTH / 2 - 2], 1);
+}
+END_TEST
+
+START_TEST(test_collision_tetromino_left) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  userInput(Left, false);
+  userInput(Left, false);
+  userInput(Left, false);
+  game_info = updateCurrentState();
+  Tetromino tmp = game_info.current;
+  tmp.x--;
+  ck_assert_int_eq(check_collision(game_info.current), 0);
+  ck_assert_int_eq(check_collision(tmp), 1);
+}
+
+START_TEST(test_collision_tetromino_right) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  userInput(Right, false);
+  userInput(Right, false);
+  userInput(Right, false);
+  userInput(Right, false);
+  userInput(Right, false);
+  userInput(Right, false);
+  game_info = updateCurrentState();
+  Tetromino tmp = game_info.current;
+  tmp.x++;
+  ck_assert_int_eq(check_collision(game_info.current), 0);
+  ck_assert_int_eq(check_collision(tmp), 1);
+}
+
+START_TEST(test_collision_tetromino_down) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  Tetromino temp = game_info.current;
+  temp.y = 17;
+  ck_assert_int_eq(check_collision(temp), 1);
+}
+END_TEST
+
 Suite *collision_suite(void) {
   Suite *s;
   TCase *tc_core;
 
   s = suite_create("Collision");
-
-  // Core test case
   tc_core = tcase_create("Core");
-  tcase_add_test(tc_core, test_collision_with_bottom);
+  tcase_add_test(tc_core, test_move_tetromino_left);
+  tcase_add_test(tc_core, test_move_tetromino_right);
+  tcase_add_test(tc_core, test_move_tetromino_down);
+  tcase_add_test(tc_core, test_collision_tetromino_left);
+  tcase_add_test(tc_core, test_collision_tetromino_right);
+  tcase_add_test(tc_core, test_collision_tetromino_down);
   suite_add_tcase(s, tc_core);
 
   return s;
@@ -40,6 +113,7 @@ Suite *collision_suite(void) {
 
 // Main function to run the tests
 int main(void) {
+  printf("lalalal");
   int number_failed;
   Suite *s;
   SRunner *sr;
