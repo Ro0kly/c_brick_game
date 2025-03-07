@@ -108,12 +108,16 @@ void userInput(UserAction_t action, bool hold) {
   }
 }
 // Rotate the current tetromino
-void rotate_tetromino() {
+int rotate_tetromino() {
+  int flag = 0;
   Tetromino temp = game_info.current;
   temp.rotation = (temp.rotation + 1) % 4;
   if (!check_collision(temp)) {
     game_info.current.rotation = temp.rotation;
+  } else {
+    flag = 1;
   }
+  return flag;
 }
 // Spawn a new tetromino
 void spawn_tetromino() {
@@ -125,15 +129,22 @@ void spawn_tetromino() {
   game_info.next.type = rand() % 7;
   game_info.next.rotation = rand() % 4;
 }
-// // Display game over message
+void change_tetromino_type(int type) { game_info.current.type = type; }
+void change_tetromino_rotation(int rotation) {
+  game_info.current.rotation = rotation;
+}
+void change_position_of_current_to(int y, int x) {
+  game_info.current.y = y;
+  game_info.current.x = x;
+}
 
 // Check for collision with the field or boundaries
 int check_collision(Tetromino t) {
   for (int y = 0; y < TETROMINO_SIZE; y++) {
     for (int x = 0; x < TETROMINO_SIZE; x++) {
       if (tetrominoes[t.type][t.rotation][y][x]) {
-        int new_x = t.x + x;
         int new_y = t.y + y;
+        int new_x = t.x + x;
         if (new_x < 0 || new_x >= WIDTH || new_y >= HEIGHT ||
             game_info.field[new_y][new_x]) {
           return 1;

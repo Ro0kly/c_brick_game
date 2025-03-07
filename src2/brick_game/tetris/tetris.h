@@ -25,7 +25,7 @@ void move_right();
 
 GameInfo_t updateCurrentState();
 int check_collision(Tetromino t);
-void rotate_tetromino();
+int rotate_tetromino();
 void clear_lines();
 void spawn_tetromino();
 void lock_tetromino();
@@ -35,3 +35,6 @@ int getTerminateStatus();
 void setTerminateStatus(int status);
 int getOverStatus();
 void setOverStatus(int status);
+void change_position_of_current_to(int y, int x);
+void change_tetromino_type(int type);
+void change_tetromino_rotation(int rotation);
