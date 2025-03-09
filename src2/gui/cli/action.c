@@ -20,14 +20,14 @@ UserAction_t getUserAction() {
   case 'q': // Quit game
     action = Terminate;
     break;
-  case ERR:
-    action = Nothing;
-    break;
   case 's':
     action = Start;
     break;
   case 'p':
     action = Pause;
+    break;
+  case ERR:
+    action = Nothing;
     break;
   }
   return action;

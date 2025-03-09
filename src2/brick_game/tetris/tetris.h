@@ -1,4 +1,4 @@
-#include "../../data/tetrominos.h"
+#include "../../model/tetrominos.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
@@ -38,3 +38,9 @@ void setOverStatus(int status);
 void change_position_of_current_to(int y, int x);
 void change_tetromino_type(int type);
 void change_tetromino_rotation(int rotation);
+int load_max_score();
+void save_max_score();
+void updateScore(int lineCount);
+void updateLevel();
+long get_current_time();
+char *get_speed_name();

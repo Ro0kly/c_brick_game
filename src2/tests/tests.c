@@ -1,7 +1,7 @@
 // #include "tetris.h" // Include your Tetris program header
 #include "../brick_game/tetris/tetris.h"
-#include "../data/tetrominos.h"
 #include "../gui/cli/action.h"
+#include "../model/tetrominos.h"
 #include <check.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -293,6 +293,7 @@ START_TEST(test_game_over) {
   ck_assert_int_eq(game_info.over, 1);
   ck_assert_int_eq(game_info.pause, 1);
 }
+
 Suite *collision_suite(void) {
   Suite *s;
   TCase *tc_core;

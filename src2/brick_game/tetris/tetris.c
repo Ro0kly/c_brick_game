@@ -15,11 +15,63 @@ void initGameInfo() {
   game_info.pause = 1;
   game_info.over = 0;
   game_info.terminate = 0;
+  game_info.level = 1;
+  game_info.speed = 1;
+}
+
+char *get_speed_name() {
+  switch (game_info.speed) {
+  case 1:
+    return "Snail";
+  case 2:
+    return "Turtle";
+  case 3:
+    return "Sloth";
+  case 4:
+    return "Panda";
+  case 5:
+    return "Kangaroo";
+  case 6:
+    return "Cheetah";
+  case 7:
+    return "Falcon";
+  case 8:
+    return "Rocket";
+  case 9:
+    return "Lightning";
+  case 10:
+    return "Sonic";
+  default:
+    return "Unknown"; // Handle invalid speed levels
+  }
+}
+int load_max_score() {
+  int flag = 1;
+  FILE *file = fopen("data/max_score.txt", "r");
+  if (file) {
+    fscanf(file, "%d", &game_info.high_score);
+    fclose(file);
+  } else {
+    flag = 0;
+  }
+  return flag;
+}
+void save_max_score() {
+  FILE *file = fopen("data/max_score.txt", "w");
+  if (file) {
+    fprintf(file, "%d", game_info.score);
+    fclose(file);
+  }
 }
 int getOverStatus() { return game_info.over; }
 void setOverStatus(int status) { game_info.over = status; }
 int getTerminateStatus() { return game_info.terminate; }
-void setTerminateStatus(int status) { game_info.terminate = status; }
+void setTerminateStatus(int status) {
+  if (game_info.score > game_info.high_score) {
+    save_max_score();
+  }
+  game_info.terminate = status;
+}
 int getPauseStatus() { return game_info.pause; }
 void setPauseStatus(int status) { game_info.pause = status; }
 GameInfo_t updateCurrentState() { return game_info; }
@@ -28,8 +80,16 @@ void move_bottom() { game_info.current.y++; }
 void move_left() { game_info.current.x--; }
 void move_right() { game_info.current.x++; }
 void game_over() {
+  if (game_info.score > game_info.high_score) {
+    save_max_score();
+  }
   setPauseStatus(1);
   setOverStatus(1);
+}
+long get_current_time() {
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  return ts.tv_sec * 1000000000L + ts.tv_nsec; // Convert to nanoseconds
 }
 void shift() {
   if (getPauseStatus()) {
@@ -157,6 +217,7 @@ int check_collision(Tetromino t) {
 
 // Clear completed lines and update the score
 void clear_lines() {
+  int lineCount = 0;
   for (int y = HEIGHT - 1; y >= 0; y--) {
     int full = 1;
     for (int x = 0; x < WIDTH; x++) {
@@ -166,6 +227,7 @@ void clear_lines() {
       }
     }
     if (full) {
+      lineCount++;
       // Shift all lines above down
       for (int yy = y; yy > 0; yy--) {
         for (int x = 0; x < WIDTH; x++) {
@@ -174,14 +236,45 @@ void clear_lines() {
       }
       // Clear the top line
       // for (int x = 0; x < WIDTH; x++) {
-      //   field[0][x] = 0;
+      //   game_info.field[0][x] = 0;
       // }
       // score += 100; // Increase score
-      // y++;          // Recheck the same line
+      y++; // Recheck the same line
     }
   }
+  if (lineCount != 0) {
+    updateScore(lineCount);
+    updateLevel();
+  }
 }
-
+void updateLevel() {
+  if (game_info.score % 600 == 0 && game_info.level != 10) {
+    game_info.level += 1;
+    game_info.speed += 1;
+  }
+}
+void updateScore(int lineCount) {
+  switch (lineCount) {
+  case 1:
+    game_info.score += 100;
+    break;
+  case 2:
+    game_info.score += 300;
+    break;
+  case 3:
+    game_info.score += 700;
+    break;
+  case 4:
+    game_info.score += 1500;
+    break;
+  default:
+    game_info.score += 0;
+  }
+  if (game_info.score > game_info.high_score) {
+    game_info.high_score = game_info.score;
+    save_max_score();
+  }
+}
 // Lock the current tetromino into the field
 void lock_tetromino() {
   for (int y = 0; y < TETROMINO_SIZE; y++) {
