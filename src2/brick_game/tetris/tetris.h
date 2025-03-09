@@ -44,3 +44,4 @@ void updateScore(int lineCount);
 void updateLevel();
 long get_current_time();
 char *get_speed_name();
+void setSpeed(int value);

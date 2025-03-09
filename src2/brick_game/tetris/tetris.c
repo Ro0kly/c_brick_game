@@ -19,6 +19,7 @@ void initGameInfo() {
   game_info.speed = 1;
 }
 
+void setSpeed(int value) { game_info.speed = value; }
 char *get_speed_name() {
   switch (game_info.speed) {
   case 1:

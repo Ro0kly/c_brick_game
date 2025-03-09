@@ -7,6 +7,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+START_TEST(test_shift) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  GameInfo_t game_info = updateCurrentState();
+  int y0 = game_info.current.y;
+  shift();
+  game_info = updateCurrentState();
+  int y1 = game_info.current.y;
+  ck_assert_int_eq(y0 + 1, y1);
+}
+START_TEST(test_shift_lock) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  change_position_of_current_to(19, 0);
+  GameInfo_t game_info = updateCurrentState();
+  shift();
+  game_info = updateCurrentState();
+  int y = game_info.current.y;
+  ck_assert_int_eq(y, 0);
+}
 START_TEST(test_move_tetromino_left) {
   initGameInfo();
   spawn_tetromino();
@@ -158,13 +180,17 @@ END_TEST
 START_TEST(test_rotation_tetromino_left_wall) {
   initGameInfo();
   spawn_tetromino();
+  GameInfo_t game_info = updateCurrentState();
+  int rot0 = game_info.current.rotation;
   userInput(Start, false);
   userInput(Left, false);
   userInput(Left, false);
   userInput(Left, false);
-  ck_assert_int_eq(rotate_tetromino(), 0);
-  GameInfo_t game_info = updateCurrentState();
-  ck_assert_int_eq(game_info.current.rotation, 1);
+  userInput(Action, false);
+  game_info = updateCurrentState();
+  int rot1 = game_info.current.rotation;
+  ck_assert_int_eq(rot1, 1);
+  ck_assert_int_eq(rot0 != rot1, 1);
 }
 
 START_TEST(test_rotation_tetromino_right_wall) {
@@ -294,12 +320,190 @@ START_TEST(test_game_over) {
   ck_assert_int_eq(game_info.pause, 1);
 }
 
+START_TEST(test_add_score_one_line) {
+  initGameInfo();
+  spawn_tetromino();
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Start, false);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 4);
+  change_tetromino_type(1);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.score, 100);
+}
+
+START_TEST(test_add_score_two_lines) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+
+  change_position_of_current_to(0, 4);
+  change_tetromino_type(1);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.score, 300);
+}
+
+START_TEST(test_add_score_three_lines) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+
+  change_position_of_current_to(0, 4);
+  change_tetromino_type(0);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  change_position_of_current_to(0, 5);
+  change_tetromino_type(0);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.score, 700);
+}
+
+START_TEST(test_update_level_and_speed) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 0);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+  change_position_of_current_to(0, 6);
+  change_tetromino_type(0);
+  change_tetromino_rotation(1);
+  userInput(Down, false);
+
+  change_position_of_current_to(0, 4);
+  change_tetromino_type(0);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  change_position_of_current_to(0, 5);
+  change_tetromino_type(0);
+  change_tetromino_rotation(0);
+  userInput(Down, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.level, 1);
+  ck_assert_int_eq(game_info.speed, 1);
+}
+
+START_TEST(test_pause) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  userInput(Pause, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.pause, 1);
+}
+
+START_TEST(test_speed) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  setSpeed(1);
+  char *str1 = get_speed_name();
+  ck_assert_str_eq(str1, "Snail");
+  setSpeed(2);
+  char *str2 = get_speed_name();
+  ck_assert_str_eq(str2, "Turtle");
+  setSpeed(3);
+  char *str3 = get_speed_name();
+  ck_assert_str_eq(str3, "Sloth");
+  setSpeed(4);
+  char *str4 = get_speed_name();
+  ck_assert_str_eq(str4, "Panda");
+  setSpeed(5);
+  char *str5 = get_speed_name();
+  ck_assert_str_eq(str5, "Kangaroo");
+  setSpeed(6);
+  char *str6 = get_speed_name();
+  ck_assert_str_eq(str6, "Cheetah");
+  setSpeed(7);
+  char *str7 = get_speed_name();
+  ck_assert_str_eq(str7, "Falcon");
+  setSpeed(8);
+  char *str8 = get_speed_name();
+  ck_assert_str_eq(str8, "Rocket");
+  setSpeed(9);
+  char *str9 = get_speed_name();
+  ck_assert_str_eq(str9, "Lightning");
+  setSpeed(10);
+  char *str10 = get_speed_name();
+  ck_assert_str_eq(str10, "Sonic");
+}
 Suite *collision_suite(void) {
   Suite *s;
   TCase *tc_core;
 
   s = suite_create("Collision");
   tc_core = tcase_create("Core");
+  tcase_add_test(tc_core, test_shift);
+  tcase_add_test(tc_core, test_shift_lock);
   tcase_add_test(tc_core, test_move_tetromino_left);
   tcase_add_test(tc_core, test_move_tetromino_right);
   tcase_add_test(tc_core, test_move_tetromino_down);
@@ -317,6 +521,12 @@ Suite *collision_suite(void) {
   tcase_add_test(tc_core, test_rotation_near_tetromino_down);
   tcase_add_test(tc_core, test_line_clearing);
   tcase_add_test(tc_core, test_game_over);
+  tcase_add_test(tc_core, test_add_score_one_line);
+  tcase_add_test(tc_core, test_add_score_two_lines);
+  tcase_add_test(tc_core, test_add_score_three_lines);
+  tcase_add_test(tc_core, test_update_level_and_speed);
+  tcase_add_test(tc_core, test_pause);
+  tcase_add_test(tc_core, test_speed);
   suite_add_tcase(s, tc_core);
 
   return s;
