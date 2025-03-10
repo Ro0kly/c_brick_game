@@ -17,7 +17,7 @@ UserAction_t getUserAction() {
   case KEY_UP:
     action = Action;
     break;
-  case 'q': // Quit game
+  case 'q':
     action = Terminate;
     break;
   case 's':

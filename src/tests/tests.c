@@ -316,8 +316,8 @@ START_TEST(test_game_over) {
     userInput(Down, false);
   }
   game_info = updateCurrentState();
-  ck_assert_int_eq(game_info.over, 1);
-  ck_assert_int_eq(game_info.pause, 1);
+  ck_assert_int_eq(getOverStatus(), 1);
+  ck_assert_int_eq(getPauseStatus(), 1);
 }
 
 START_TEST(test_add_score_one_line) {
@@ -448,17 +448,22 @@ START_TEST(test_update_level_and_speed) {
   change_tetromino_rotation(0);
   userInput(Down, false);
   GameInfo_t game_info = updateCurrentState();
-  ck_assert_int_eq(game_info.level, 1);
-  ck_assert_int_eq(game_info.speed, 1);
+  ck_assert_int_eq(game_info.level, 2);
+  ck_assert_int_eq(game_info.speed, 2);
 }
 
 START_TEST(test_pause) {
   initGameInfo();
   spawn_tetromino();
+  GameInfo_t game_info = updateCurrentState();
+  int r0 = game_info.current.rotation;
   userInput(Start, false);
   userInput(Pause, false);
-  GameInfo_t game_info = updateCurrentState();
+  userInput(Action, false);
+  game_info = updateCurrentState();
+  int r1 = game_info.current.rotation;
   ck_assert_int_eq(game_info.pause, 1);
+  ck_assert_int_eq(r0, r1);
 }
 
 START_TEST(test_speed) {
@@ -496,6 +501,16 @@ START_TEST(test_speed) {
   char *str10 = get_speed_name();
   ck_assert_str_eq(str10, "Sonic");
 }
+
+START_TEST(test_terminate) {
+  initGameInfo();
+  spawn_tetromino();
+  userInput(Start, false);
+  userInput(Terminate, false);
+  GameInfo_t game_info = updateCurrentState();
+  ck_assert_int_eq(game_info.terminate, 1);
+}
+
 Suite *collision_suite(void) {
   Suite *s;
   TCase *tc_core;
@@ -520,13 +535,14 @@ Suite *collision_suite(void) {
   tcase_add_test(tc_core, test_rotation_near_tetromino_right);
   tcase_add_test(tc_core, test_rotation_near_tetromino_down);
   tcase_add_test(tc_core, test_line_clearing);
-  tcase_add_test(tc_core, test_game_over);
   tcase_add_test(tc_core, test_add_score_one_line);
   tcase_add_test(tc_core, test_add_score_two_lines);
   tcase_add_test(tc_core, test_add_score_three_lines);
   tcase_add_test(tc_core, test_update_level_and_speed);
   tcase_add_test(tc_core, test_pause);
   tcase_add_test(tc_core, test_speed);
+  tcase_add_test(tc_core, test_terminate);
+  tcase_add_test(tc_core, test_game_over);
   suite_add_tcase(s, tc_core);
 
   return s;

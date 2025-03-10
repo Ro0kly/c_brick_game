@@ -6,9 +6,9 @@
 #define TETROMINOS_H
 
 typedef struct {
-  int x, y;     // Position of the tetromino
-  int type;     // Type of tetromino (0-6)
-  int rotation; // Current rotation (0-3)
+  int x, y;
+  int type;
+  int rotation;
 } Tetromino;
 
 typedef enum {

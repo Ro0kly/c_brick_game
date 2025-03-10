@@ -30,7 +30,8 @@ uninstall:
 	@echo "-------------------------------------------"
 
 test:
-	@mkdir -p ${TEST_DIR}
+	@rm -rf ${TEST_DIR}
+	@mkdir ${TEST_DIR}
 	@${GCC} ${TEST_FILE} ${DATA_FILE} ${TETRIS_FILE} ${DRAW_FILE} ${ACTION_FILE} -o ${TEST_DIR}/${TEST_TARGET} -lcheck -lncurses
 	@./${TEST_DIR}/${TEST_TARGET}
 	@echo "-------------------------------------------"
@@ -38,6 +39,7 @@ test:
 	@echo "-------------------------------------------"
 
 gcov_report: test
+	@rm -rf ${COVERAGE_DIR}
 	@${GCC} ${TEST_FILE} ${DATA_FILE} ${TETRIS_FILE} ${DRAW_FILE} ${ACTION_FILE} ${GCOV_FLAGS} -o ${TEST_DIR}/${TEST_TARGET} -lcheck -lncurses
 	./${TEST_DIR}/${TEST_TARGET}
 	@mkdir ${COVERAGE_DIR}
